@@ -8,6 +8,7 @@ import com.example.customers.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CustomerService {
@@ -36,14 +37,42 @@ public class CustomerService {
 
         Customer saved = customerRepository.save(customer);
 
+        return toResponse(saved);
+    }
+
+    public List<CustomerResponse> buscarClientes(String dni, String email) {
+        List<Customer> customers;
+
+        if (dni != null && email != null) {
+            customers = customerRepository.findByDniAndEmail(dni, email)
+                    .map(List::of)
+                    .orElseGet(List::of);
+        } else if (dni != null) {
+            customers = customerRepository.findByDni(dni)
+                    .map(List::of)
+                    .orElseGet(List::of);
+        } else if (email != null) {
+            customers = customerRepository.findByEmail(email)
+                    .map(List::of)
+                    .orElseGet(List::of);
+        } else {
+            customers = customerRepository.findAll();
+        }
+
+        return customers.stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private CustomerResponse toResponse(Customer customer) {
         return new CustomerResponse(
-                saved.getId(),
-                saved.getNombre(),
-                saved.getApellido(),
-                saved.getEmail(),
-                saved.getDni(),
-                saved.getFechaCreacion(),
-                saved.getFechaNacimiento()
+                customer.getId(),
+                customer.getNombre(),
+                customer.getApellido(),
+                customer.getEmail(),
+                customer.getDni(),
+                customer.getFechaCreacion(),
+                customer.getFechaNacimiento()
         );
     }
 }
