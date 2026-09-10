@@ -3,10 +3,9 @@ package com.example.customers.service;
 import com.example.customers.dto.CreateCustomerRequest;
 import com.example.customers.dto.CustomerResponse;
 import com.example.customers.entity.Customer;
+import com.example.customers.exception.DuplicateCustomerException;
 import com.example.customers.repository.CustomerRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 
@@ -21,10 +20,10 @@ public class CustomerService {
 
     public CustomerResponse crearCliente(CreateCustomerRequest request) {
         if (customerRepository.existsByDni(request.dni())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un cliente con el DNI: " + request.dni());
+            throw new DuplicateCustomerException("Ya existe un cliente con el DNI: " + request.dni());
         }
         if (customerRepository.existsByEmail(request.email())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe un cliente con el email: " + request.email());
+            throw new DuplicateCustomerException("Ya existe un cliente con el email: " + request.email());
         }
 
         Customer customer = new Customer();
