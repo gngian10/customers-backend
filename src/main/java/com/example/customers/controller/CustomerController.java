@@ -1,6 +1,7 @@
 package com.example.customers.controller;
 
 import com.example.customers.dto.CreateCustomerRequest;
+import com.example.customers.dto.CustomerIndicatorsResponse;
 import com.example.customers.dto.CustomerResponse;
 import com.example.customers.service.CustomerService;
 import jakarta.validation.Valid;
@@ -36,6 +37,12 @@ public class CustomerController {
             @RequestParam(required = false) String dni,
             @RequestParam(required = false) String email) {
         List<CustomerResponse> response = customerService.buscarClientes(dni, email);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/indicadores")
+    public ResponseEntity<CustomerIndicatorsResponse> consultarIndicadores() {
+        CustomerIndicatorsResponse response = customerService.obtenerIndicadores();
         return ResponseEntity.ok(response);
     }
 }
